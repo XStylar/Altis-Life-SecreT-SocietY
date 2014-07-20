@@ -87,6 +87,7 @@ switch (true) do
 		[] spawn life_fnc_pickAxeUse;
 	};
 	
+<<<<<<< HEAD
 	case (_item == "roadcone"):
 	{
 		if(([false,_item,1] call life_fnc_handleInv)) then
@@ -110,6 +111,8 @@ switch (true) do
 			[] spawn life_fnc_barrier;
 		};
 	};
+=======
+>>>>>>> parent of ee05635... Straßensperren, Verkehrshütchen und Sandsäcke eingeführt
 	default
 	{
 		hint "Das ist kein benutzbarer Gegenstand.";

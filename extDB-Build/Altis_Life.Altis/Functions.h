@@ -123,12 +123,15 @@ class Life_Client_Core
 		class removeHeadgear {};
 		class removeWeaponAction {};
 		class froschFang {};
+<<<<<<< HEAD
 		class packupRoadcone {};
 		class packupRoadbarrier {};
 		class packupSandbag {};
 		class dragAction {};
 		class stopDragging {};
 		class freilassen {};
+=======
+>>>>>>> parent of ee05635... Straßensperren, Verkehrshütchen und Sandsäcke eingeführt
 	};
 	
 	class Housing
@@ -387,9 +390,6 @@ class Life_Client_Core
 		class blastingCharge {};
 		class defuseKit {};
 		class storageBox {};
-		class roadcone {};
-		class barrier {};
-		class sandbag {};
 	};
 	
 	class Dialog_Controls
