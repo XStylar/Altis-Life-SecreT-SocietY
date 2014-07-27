@@ -1,0 +1,363 @@
+From ee05635eebc6aab8ea788b423df17220ee9143b4 Mon Sep 17 00:00:00 2001
+From: ASSNiGhTm4r3 <xxfuturexx@web.de>
+Date: Sat, 19 Jul 2014 13:16:24 +0200
+Subject: [PATCH] =?UTF-8?q?Stra=C3=9Fensperren,=20Verkehrsh=C3=BCtchen=20u?=
+ =?UTF-8?q?nd=20Sands=C3=A4cke=20eingef=C3=BChrt?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ extDB-Build/Altis_Life.Altis/Functions.h           |  6 ++++++
+ .../core/actions/fn_packupRoadbarrier.sqf          | 20 ++++++++++++++++++
+ .../core/actions/fn_packupRoadcone.sqf             | 20 ++++++++++++++++++
+ .../core/actions/fn_packupSandbag.sqf              | 20 ++++++++++++++++++
+ .../Altis_Life.Altis/core/config/fn_itemWeight.sqf |  3 +++
+ .../Altis_Life.Altis/core/config/fn_varHandle.sqf  |  6 ++++++
+ .../Altis_Life.Altis/core/config/fn_varToStr.sqf   |  3 +++
+ .../Altis_Life.Altis/core/config/fn_virt_shops.sqf |  4 ++--
+ .../Altis_Life.Altis/core/configuration.sqf        | 15 +++++++++++---
+ .../Altis_Life.Altis/core/items/fn_barrier.sqf     | 24 ++++++++++++++++++++++
+ .../Altis_Life.Altis/core/items/fn_roadcone.sqf    | 24 ++++++++++++++++++++++
+ .../Altis_Life.Altis/core/items/fn_sandbag.sqf     | 24 ++++++++++++++++++++++
+ .../Altis_Life.Altis/core/pmenu/fn_useItem.sqf     | 14 +++++++++++++
+ 13 files changed, 178 insertions(+), 5 deletions(-)
+ create mode 100644 extDB-Build/Altis_Life.Altis/core/actions/fn_packupRoadbarrier.sqf
+ create mode 100644 extDB-Build/Altis_Life.Altis/core/actions/fn_packupRoadcone.sqf
+ create mode 100644 extDB-Build/Altis_Life.Altis/core/actions/fn_packupSandbag.sqf
+ create mode 100644 extDB-Build/Altis_Life.Altis/core/items/fn_barrier.sqf
+ create mode 100644 extDB-Build/Altis_Life.Altis/core/items/fn_roadcone.sqf
+ create mode 100644 extDB-Build/Altis_Life.Altis/core/items/fn_sandbag.sqf
+
+diff --git a/extDB-Build/Altis_Life.Altis/Functions.h b/extDB-Build/Altis_Life.Altis/Functions.h
+index 68ad697..cdd3308 100644
+--- a/extDB-Build/Altis_Life.Altis/Functions.h
++++ b/extDB-Build/Altis_Life.Altis/Functions.h
+@@ -123,6 +123,9 @@ class Life_Client_Core
+ 		class removeHeadgear {};
+ 		class removeWeaponAction {};
+ 		class froschFang {};
++		class packupRoadcone {};
++		class packupRoadbarrier {};
++		class packupSandbag {};
+ 	};
+ 	
+ 	class Housing
+@@ -378,6 +381,9 @@ class Life_Client_Core
+ 		class blastingCharge {};
+ 		class defuseKit {};
+ 		class storageBox {};
++		class roadcone {};
++		class barrier {};
++		class sandbag {};
+ 	};
+ 	
+ 	class Dialog_Controls
+diff --git a/extDB-Build/Altis_Life.Altis/core/actions/fn_packupRoadbarrier.sqf b/extDB-Build/Altis_Life.Altis/core/actions/fn_packupRoadbarrier.sqf
+new file mode 100644
+index 0000000..ff645db
+--- /dev/null
++++ b/extDB-Build/Altis_Life.Altis/core/actions/fn_packupRoadbarrier.sqf
+@@ -0,0 +1,20 @@
++/*
++	File: fn_packupRoadbarrier.sqf
++	Based on fn_packupSpikes.sqf
++	by Bryan "Tonic" Boardwine
++	
++	Description:
++	Packs up a deployed barrier.
++*/
++private["_barrier"];
++_barrier = nearestObjects[getPos player,["RoadBarrier_small_F"],8] select 0;
++if(isNil "_barrier") exitWith {};
++if(playerSide == west || playerSide == east) then {
++	if(([true,"barrier",1] call life_fnc_handleInv)) then
++	{
++		titleText["Du hast die Absperrung eingepackt.","PLAIN"];
++		player removeAction life_action_packupRoadbarrier;
++		life_action_packupRoadbarrier = nil;
++		deleteVehicle _barrier;
++	};
++};
+\ No newline at end of file
+diff --git a/extDB-Build/Altis_Life.Altis/core/actions/fn_packupRoadcone.sqf b/extDB-Build/Altis_Life.Altis/core/actions/fn_packupRoadcone.sqf
+new file mode 100644
+index 0000000..ebefa5f
+--- /dev/null
++++ b/extDB-Build/Altis_Life.Altis/core/actions/fn_packupRoadcone.sqf
+@@ -0,0 +1,20 @@
++/*
++	File: fn_packuproadcone.sqf
++	Based on fn_packupSpikes.sqf
++	by Bryan "Tonic" Boardwine
++	
++	Description:
++	Packs up a deployed roadcone.
++*/
++private["_cone"];
++_cone = nearestObjects[getPos player,["RoadCone_L_F"],8] select 0;
++if(isNil "_cone") exitWith {};
++if(playerSide == west || playerSide == east) then {
++	if(([true,"roadcone",1] call life_fnc_handleInv)) then
++	{
++		titleText["Du hast das Verkehrsh�tchen eingepackt.","PLAIN"];
++		player removeAction life_action_packupRoadcone;
++		life_action_packupRoadcone = nil;
++		deleteVehicle _cone;
++	};
++};
+\ No newline at end of file
+diff --git a/extDB-Build/Altis_Life.Altis/core/actions/fn_packupSandbag.sqf b/extDB-Build/Altis_Life.Altis/core/actions/fn_packupSandbag.sqf
+new file mode 100644
+index 0000000..fcdc08f
+--- /dev/null
++++ b/extDB-Build/Altis_Life.Altis/core/actions/fn_packupSandbag.sqf
+@@ -0,0 +1,20 @@
++/*
++	File: fn_packupSandbag.sqf
++	Based on fn_packupSpikes.sqf
++	by Bryan "Tonic" Boardwine
++	
++	Description:
++	Packs up a deployed sandbag wall.
++*/
++private["_bag"];
++_bag = nearestObjects[getPos player,["Land_BagFence_Long_F"],8] select 0;
++if(isNil "_bag") exitWith {};
++if(playerSide == west || playerSide == east) then {
++	if(([true,"sandbag",1] call life_fnc_handleInv)) then
++	{
++		titleText["Du hast die Sands�cke eingepackt.","PLAIN"];
++		player removeAction life_action_packupSandbag;
++		life_action_packupSandbag = nil;
++		deleteVehicle _bag;
++	};
++};
+\ No newline at end of file
+diff --git a/extDB-Build/Altis_Life.Altis/core/config/fn_itemWeight.sqf b/extDB-Build/Altis_Life.Altis/core/config/fn_itemWeight.sqf
+index 108516f..fdf86b1 100644
+--- a/extDB-Build/Altis_Life.Altis/core/config/fn_itemWeight.sqf
++++ b/extDB-Build/Altis_Life.Altis/core/config/fn_itemWeight.sqf
+@@ -61,5 +61,8 @@ switch (_item) do
+ 	case "froschbein": {2};
+ 	case "handschellen": {1};
+ 	case "kabelb": {1};
++	case "roadcone": {1};
++	case "barrier": {2};
++	case "sandbag": {2};
+ 	default {1};
+ };
+diff --git a/extDB-Build/Altis_Life.Altis/core/config/fn_varHandle.sqf b/extDB-Build/Altis_Life.Altis/core/config/fn_varHandle.sqf
+index 94f7cd3..b3208aa 100644
+--- a/extDB-Build/Altis_Life.Altis/core/config/fn_varHandle.sqf
++++ b/extDB-Build/Altis_Life.Altis/core/config/fn_varHandle.sqf
+@@ -70,6 +70,9 @@ switch (_mode) do
+ 			case "froschlsd": {"life_inv_froschlsd"};
+ 			case "froschbein": {"life_inv_froschbein"};
+ 			case "frosch": {"life_inv_frosch"};
++			case "roadcone": {"life_inv_roadcone"};
++			case "barrier": {"life_inv_barrier"};
++			case "sandbag": {"life_inv_sandbag"};
+ 		};
+ 	};
+ 	
+@@ -131,6 +134,9 @@ switch (_mode) do
+ 			case "life_inv_froschlsd": {"froschlsd"};
+ 			case "life_inv_froschbein": {"froschbein"};
+ 			case "life_inv_frosch": {"frosch"};
++			case "life_inv_sandbag": {"sandbag"};
++			case "life_inv_barrier": {"barrier"};
++			case "life_inv_roadcone": {"roadcone"};
+ 		};
+ 	};
+ };
+diff --git a/extDB-Build/Altis_Life.Altis/core/config/fn_varToStr.sqf b/extDB-Build/Altis_Life.Altis/core/config/fn_varToStr.sqf
+index 1681cf8..447553a 100644
+--- a/extDB-Build/Altis_Life.Altis/core/config/fn_varToStr.sqf
++++ b/extDB-Build/Altis_Life.Altis/core/config/fn_varToStr.sqf
+@@ -66,6 +66,9 @@ switch (_var) do
+ 	case "life_inv_froschlsd": {"Frosch-LSD"};
+ 	case "life_inv_froschbein": {"Froschschenkel"};
+ 	case "life_inv_frosch": {"Frösche"};
++	case "life_inv_roadcone": {"Verkehrshütchen"};
++	case "life_inv_barrier": {"Holzbarriere"};
++	case "life_inv_sandbag": {"Sandsackmauer"};
+ 	
+ 	//License Block
+ 	case "license_civ_driver": {"Führerschein"};
+diff --git a/extDB-Build/Altis_Life.Altis/core/config/fn_virt_shops.sqf b/extDB-Build/Altis_Life.Altis/core/config/fn_virt_shops.sqf
+index 5bd8039..14a2c7d 100644
+--- a/extDB-Build/Altis_Life.Altis/core/config/fn_virt_shops.sqf
++++ b/extDB-Build/Altis_Life.Altis/core/config/fn_virt_shops.sqf
+@@ -22,7 +22,7 @@ switch (_shop) do
+ 	case "iron": {["Altis Industriehändler",["iron_r","copper_r"]]};
+ 	case "diamond": {["Diamantenhändler",["diamond","diamondc"]]};
+ 	case "salt": {["Salzhändler",["salt_r"]]};
+-	case "cop": {["Polizeibedarf",["handschellen","donuts","coffee","spikeStrip","water","tbacon","rabbit","apple","redgull","fuelF","defusekit"]]};
++	case "cop": {["Polizeibedarf",["handschellen","donuts","coffee","spikeStrip","roadcone","barrier","sandbag","water","tbacon","rabbit","apple","redgull","fuelF","defusekit"]]};
+ 	case "cement": {["Zementhändler",["cement"]]};
+-	case "adac": {["Mitarbeiterkiosk",["fuelF","water","apple","rabbit","redgull","tbacon"]]};
++	case "adac": {["Mitarbeiterkiosk",["fuelF","water","roadcone","barrier","apple","rabbit","redgull","tbacon"]]};
+ };
+\ No newline at end of file
+diff --git a/extDB-Build/Altis_Life.Altis/core/configuration.sqf b/extDB-Build/Altis_Life.Altis/core/configuration.sqf
+index 5469078..be2c40f 100644
+--- a/extDB-Build/Altis_Life.Altis/core/configuration.sqf
++++ b/extDB-Build/Altis_Life.Altis/core/configuration.sqf
+@@ -179,7 +179,10 @@ life_inv_items =
+ 	"life_inv_kabelb",
+ 	"life_inv_frosch",
+ 	"life_inv_froschlsd",
+-	"life_inv_froschbein"
++	"life_inv_froschbein",
++	"life_inv_roadcone",
++	"life_inv_barrier",
++	"life_inv_sandbag"
+ ];
+ 
+ //Setup variable inv vars.
+@@ -269,7 +272,10 @@ sell_array =
+ 	["handschellen",50],
+ 	["kabelb",50],
+ 	["froschlsd",65],
+-	["froschbein",40]
++	["froschbein",40],
++	["roadcone",10],
++	["barrier",20],
++	["sandbag",30]
+ ];
+ __CONST__(sell_array,sell_array);
+ 
+@@ -302,7 +308,10 @@ buy_array =
+ 	["storagebig",1500000],
+ 	["handschellen",60],
+ 	["kabelb",60],
+-	["froschbein",60]
++	["froschbein",60],
++	["roadcone",20],
++	["barrier",30],
++	["sandbag",40]
+ ];
+ __CONST__(buy_array,buy_array);
+ 
+diff --git a/extDB-Build/Altis_Life.Altis/core/items/fn_barrier.sqf b/extDB-Build/Altis_Life.Altis/core/items/fn_barrier.sqf
+new file mode 100644
+index 0000000..2408065
+--- /dev/null
++++ b/extDB-Build/Altis_Life.Altis/core/items/fn_barrier.sqf
+@@ -0,0 +1,24 @@
++﻿/*
++	File: fn_barrier.sqf
++	Based on: fn_spikeStrip
++	by Bryan "Tonic" Boardwine
++	
++	Description:
++	Creates a barrier...
++*/
++private["_position","_roadbarrier"];
++_roadbarrier = "RoadBarrier_small_F" createVehicle [0,0,0];
++_roadbarrier attachTo[player,[0,5.5,0]];
++_roadbarrier setDir 90;
++_roadbarrier setVariable["item","roadbarrierDeployed",true];
++
++life_action_placeRoadbarrier = player addAction["Absperrung aufstellen",{if(!isNull life_roadbarrier) then {detach life_roadbarrier; life_roadbarrier = ObjNull;}; player removeAction life_action_placeRoadbarrier; life_action_placeRoadbarrier = nil;},"",999,false,false,"",'!isNull life_roadbarrier'];
++life_roadbarrier = _roadbarrier;
++waitUntil {isNull life_roadbarrier};
++if(!isNil "life_action_placeRoadbarrier") then {player removeAction life_action_placeRoadbarrier;};
++
++if(isNull _roadbarrier) exitWith {life_roadbarrier = ObjNull;};
++_roadbarrier setPos [(getPos _roadbarrier select 0),(getPos _roadbarrier select 1),0];
++_roadbarrier setDamage 0;
++life_action_packupRoadbarrier = player addAction["Absperrung einpacken",life_fnc_packuproadbarrier,"",0,false,false,"",
++' _barrier = nearestObjects[getPos player,["RoadBarrier_small_F"],8] select 0; !isNil "_barrier" && !isNil {(_barrier getVariable "item")}'];
+\ No newline at end of file
+diff --git a/extDB-Build/Altis_Life.Altis/core/items/fn_roadcone.sqf b/extDB-Build/Altis_Life.Altis/core/items/fn_roadcone.sqf
+new file mode 100644
+index 0000000..3c73140
+--- /dev/null
++++ b/extDB-Build/Altis_Life.Altis/core/items/fn_roadcone.sqf
+@@ -0,0 +1,24 @@
++﻿/*
++	File: fn_roadcone.sqf
++	Based on: fn_spikeStrip
++	by Bryan "Tonic" Boardwine
++	
++	Description:
++	Creates a Roadcone...
++*/
++private["_position","_roadcone"];
++_roadcone = "RoadCone_L_F" createVehicle [0,0,0];
++_roadcone attachTo[player,[0,5.5,0]];
++_roadcone setDir 90;
++_roadcone setVariable["item","roadconeDeployed",true];
++
++life_action_placeRoadcone = player addAction["Verkehrshütchen aufstellen",{if(!isNull life_roadcone) then {detach life_roadcone; life_roadcone = ObjNull;}; player removeAction life_action_placeRoadcone; life_action_placeRoadcone = nil;},"",999,false,false,"",'!isNull life_roadcone'];
++life_roadcone = _roadcone;
++waitUntil {isNull life_roadcone};
++if(!isNil "life_action_placeRoadcone") then {player removeAction life_action_placeRoadcone;};
++
++if(isNull _roadcone) exitWith {life_roadcone = ObjNull;};
++_roadcone setPos [(getPos _roadcone select 0),(getPos _roadcone select 1),0];
++_roadcone setDamage 0;
++life_action_packupRoadcone = player addAction["Verkehrshütchen einpacken",life_fnc_packuproadcone,"",0,false,false,"",
++' _cone = nearestObjects[getPos player,["RoadCone_L_F"],8] select 0; !isNil "_cone" && !isNil {(_cone getVariable "item")}'];
+\ No newline at end of file
+diff --git a/extDB-Build/Altis_Life.Altis/core/items/fn_sandbag.sqf b/extDB-Build/Altis_Life.Altis/core/items/fn_sandbag.sqf
+new file mode 100644
+index 0000000..ed47b05
+--- /dev/null
++++ b/extDB-Build/Altis_Life.Altis/core/items/fn_sandbag.sqf
+@@ -0,0 +1,24 @@
++﻿/*
++	File: fn_sandbag.sqf
++	Based on: fn_spikeStrip
++	by Bryan "Tonic" Boardwine
++	
++	Description:
++	Creates a Sandbag wall...
++*/
++private["_position","_sandbag"];
++_sandbag = "Land_BagFence_Long_F" createVehicle [0,0,0];
++_sandbag attachTo[player,[0,5.5,0]];
++_sandbag setDir 90;
++_sandbag setVariable["item","sandbagDeployed",true];
++
++life_action_placeSandbag = player addAction["Sandsäcke aufstellen",{if(!isNull life_sandbag) then {detach life_sandbag; life_sandbag = ObjNull;}; player removeAction life_action_placeSandbag; life_action_placeSandbag = nil;},"",999,false,false,"",'!isNull life_sandbag'];
++life_sandbag = _sandbag;
++waitUntil {isNull life_sandbag};
++if(!isNil "life_action_placesandbag") then {player removeAction life_action_placeSandbag;};
++
++if(isNull _sandbag) exitWith {life_sandbag = ObjNull;};
++_sandbag setPos [(getPos _sandbag select 0),(getPos _sandbag select 1),0];
++_sandbag setDamage 0;
++life_action_packupSandbag = player addAction["Sandsäcke einpacken",life_fnc_packupSandbag,"",0,false,false,"",
++' _bag = nearestObjects[getPos player,["Land_BagFence_Long_F"],8] select 0; !isNil "_bag" && !isNil {(_bag getVariable "item")}'];
+\ No newline at end of file
+diff --git a/extDB-Build/Altis_Life.Altis/core/pmenu/fn_useItem.sqf b/extDB-Build/Altis_Life.Altis/core/pmenu/fn_useItem.sqf
+index ac1987c..ce45f03 100644
+--- a/extDB-Build/Altis_Life.Altis/core/pmenu/fn_useItem.sqf
++++ b/extDB-Build/Altis_Life.Altis/core/pmenu/fn_useItem.sqf
+@@ -87,6 +87,20 @@ switch (true) do
+ 		[] spawn life_fnc_pickAxeUse;
+ 	};
+ 	
++	case (_item == "roadcone"):
++	{
++		[] spawn life_fnc_roadcone;
++	};
++	
++	case (_item == "sandbag"):
++	{
++		[] spawn life_fnc_sandbag;
++	};
++	
++	case (_item == "barrier"):
++	{
++		[] spawn life_fnc_barrier;
++	};
+ 	default
+ 	{
+ 		hint "Das ist kein benutzbarer Gegenstand.";
+-- 
+1.8.4.msysgit.0
+
